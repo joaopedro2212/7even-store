@@ -1,0 +1,154 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #0f1219;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Cabeçalho */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 8%;
+  background-color: #161b26;
+  border-bottom: 1px solid #232a3b;
+}
+
+.logo h1 {
+  font-size: 24px;
+}
+
+.logo span {
+  color: #5865F2; /* Cor do Discord */
+}
+
+.nav a {
+  color: #b9bbbe;
+  text-decoration: none;
+  margin-left: 20px;
+  transition: 0.3s;
+}
+
+.nav a:hover {
+  color: #ffffff;
+}
+
+.btn-discord-nav {
+  background-color: #5865F2;
+  color: #ffffff !important;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+.btn-discord-nav:hover {
+  background-color: #4752c4;
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(180deg, #161b26 0%, #0f1219 100%);
+}
+
+.hero h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  color: #a3a6aa;
+}
+
+/* Produtos */
+.products-section {
+  padding: 40px 8%;
+  flex: 1;
+}
+
+.products-section h2 {
+  margin-bottom: 24px;
+  font-size: 24px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.product-card {
+  background-color: #161b26;
+  border: 1px solid #232a3b;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+.product-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.product-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.product-price {
+  font-size: 20px;
+  color: #57f287;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.btn-buy {
+  background-color: #5865F2;
+  color: #ffffff;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  transition: background 0.3s;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+}
+
+.btn-buy:hover {
+  background-color: #4752c4;
+}
+
+/* Rodapé */
+.footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #161b26;
+  color: #72767d;
+  font-size: 14px;
+  border-top: 1px solid #232a3b;
+  margin-top: 40px;
+}

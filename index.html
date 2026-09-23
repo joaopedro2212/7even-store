@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7even Store - Loja Digital & Gift Cards</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            discord: '#5865F2',
+            'discord-hover': '#4752c4',
+            darkBg: '#0f1219',
+            cardBg: '#161b26',
+            cardBorder: '#232a3b',
+            accentGreen: '#57f287',
+            accentPurple: '#8b5cf6'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- FontAwesome Icons & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      background-color: #0f1219;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .glass-panel {
+      background: rgba(22, 27, 38, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(35, 42, 59, 0.8);
+    }
+
+    .glow-discord {
+      box-shadow: 0 0 20px rgba(88, 101, 242, 0.3);
+    }
+    .glow-discord:hover {
+      box-shadow: 0 0 30px rgba(88, 101, 242, 0.55);
+    }
+
+    .card-glow:hover {
+      box-shadow: 0 0 25px rgba(88, 101, 242, 0.25);
+      border-color: rgba(88, 101, 242, 0.6);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f1219;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #232a3b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #5865F2;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-pop {
+      animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-discord selection:text-white">
+
+  <script>
+    // GLOBAL LOGO ERROR HANDLER (Declared early to prevent ReferenceError)
+    function handleLogoError(imgElement) {
+      if (imgElement) {
+        imgElement.src = "https://placehold.co/48x48/5865F2/ffffff?text=7E";
+      }
+    }
+  </script>
+
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <header class="sticky top-0 z-40 glass-panel border-b border-cardBorder/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo with Dynamic HTTPS Link -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div id="brandLogoContainer" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-discord via-indigo-600 to-accentPurple flex items-center justify-center font-black text-2xl shadow-lg transform group-hover:scale-105 transition duration-300 overflow-hidden border border-discord/30">
+          <img id="brandLogoImg" src="" alt="7even Store Logo" onerror="handleLogoError(this)" class="w-full h-full object-cover">
+        </div>
+        <div class="flex flex-col">
+          <span class="text-2xl font-black tracking-tight text-white group-hover:text-discord transition duration-200">
+            7EVEN <span class="text-discord">STORE</span>
+          </span>
+          <span class="text-[10px] text-gray-400 font-semibold tracking-widest uppercase -mt-1">Digital & Gift Cards</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden lg:flex items-center gap-8">
+        <a href="#catalogo" class="text-sm font-semibold text-gray-300 hover:text-discord transition">Catálogo</a>
+        <a href="#como-funciona" class="text-sm font-semibold text-gray-300 hover:text-discord transition">Como Funciona</a>
+        <a href="#faq" class="text-sm font-semibold text-gray-300 hover:text-discord transition">FAQ</a>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="hidden sm:flex items-center gap-3">
+        <button onclick="handleAdminButtonClick()" class="text-xs font-semibold text-gray-300 hover:text-white bg-cardBg hover:bg-cardBorder border border-cardBorder px-4 py-2.5 rounded-xl transition flex items-center gap-2">
+          <i class="fa-solid fa-user-shield text-discord"></i> <span id="navAdminText">Painel Admin</span>
+        </button>
+        
+        <a id="navDiscordBtn" href="#" target="_blank" class="bg-discord hover:bg-discord-hover text-white text-sm font-bold px-5 py-2.5 rounded-xl flex items-center gap-2.5 transition duration-300 glow-discord">
+          <i class="fa-brands fa-discord text-lg"></i>
+          <span>Entrar no Discord</span>
+        </a>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="lg:hidden text-gray-300 hover:text-white text-2xl focus:outline-none p-2">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobileMenu" class="hidden lg:hidden bg-cardBg border-b border-cardBorder px-6 py-5 space-y-4 shadow-2xl">
+      <a href="#catalogo" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-discord font-medium py-1">Catálogo</a>
+      <a href="#como-funciona" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-discord font-medium py-1">Como Funciona</a>
+      <a href="#faq" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-discord font-medium py-1">FAQ</a>
+      <div class="pt-3 border-t border-cardBorder flex flex-col gap-3">
+        <button onclick="toggleMobileMenu(); handleAdminButtonClick();" class="w-full text-left text-xs font-semibold text-gray-300 bg-darkBg border border-cardBorder px-4 py-2.5 rounded-xl flex items-center gap-2">
+          <i class="fa-solid fa-user-shield text-discord"></i> Painel Admin
+        </button>
+        <a id="mobileDiscordBtn" href="#" target="_blank" class="w-full bg-discord hover:bg-discord-hover text-center text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2">
+          <i class="fa-brands fa-discord text-lg"></i> Entrar no Discord
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="relative overflow-hidden bg-gradient-to-b from-[#161b26] via-[#121621] to-[#0f1219] py-16 sm:py-24 border-b border-cardBorder/50">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(88,101,242,0.18),transparent_60%)] pointer-events-none"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      
+      <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-xs font-bold bg-discord/15 text-discord border border-discord/30 mb-8 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-accentGreen animate-pulse"></span>
+        <span>Entrega Automática & Suporte Instantâneo via Discord (#7EVEN-XXXX)</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white mb-6 leading-tight">
+        Sua Loja Digital <br class="hidden sm:inline">
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-discord via-indigo-400 to-accentGreen">
+          7even Store
+        </span>
+      </h1>
+
+      <p class="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-gray-400 mb-10 leading-relaxed font-normal">
+        Adquira PINs e códigos para Google Play, Roblox, Free Fire, Valorant, Xbox e Discord Nitro com suporte ativo e agilidade garantida.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+        <a href="#catalogo" class="w-full sm:w-auto bg-discord hover:bg-discord-hover text-white font-bold px-8 py-4 rounded-xl transition duration-300 flex items-center justify-center gap-3 glow-discord text-base">
+          <i class="fa-solid fa-cart-shopping"></i> Explorar o Catálogo
+        </a>
+        <a id="heroDiscordBtn" href="#" target="_blank" class="w-full sm:w-auto bg-cardBg hover:bg-cardBorder text-white font-bold px-8 py-4 rounded-xl border border-cardBorder transition duration-300 flex items-center justify-center gap-3 text-base">
+          <i class="fa-brands fa-discord text-xl text-discord"></i> Comunidade Discord
+        </a>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-8 border-t border-cardBorder/60 text-left">
+        <div class="bg-cardBg/60 backdrop-blur-sm p-4 rounded-2xl border border-cardBorder/80">
+          <div class="text-2xl sm:text-3xl font-black text-white mb-1">+18.500</div>
+          <div class="text-xs text-gray-400 font-medium">Pedidos Entregues</div>
+        </div>
+        <div class="bg-cardBg/60 backdrop-blur-sm p-4 rounded-2xl border border-cardBorder/80">
+          <div class="text-2xl sm:text-3xl font-black text-accentGreen mb-1">100%</div>
+          <div class="text-xs text-gray-400 font-medium">Garantia de Resgate</div>
+        </div>
+        <div class="bg-cardBg/60 backdrop-blur-sm p-4 rounded-2xl border border-cardBorder/80">
+          <div class="text-2xl sm:text-3xl font-black text-discord mb-1">&lt; 3 Min</div>
+          <div class="text-xs text-gray-400 font-medium">Atendimento Rápido</div>
+        </div>
+        <div class="bg-cardBg/60 backdrop-blur-sm p-4 rounded-2xl border border-cardBorder/80">
+          <div class="text-2xl sm:text-3xl font-black text-indigo-400 mb-1">24/7</div>
+          <div class="text-xs text-gray-400 font-medium">Tickets no Discord</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 flex-grow w-full" id="catalogo">
+    
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+      <div>
+        <div class="flex items-center gap-2 text-discord font-bold text-xs uppercase tracking-wider mb-1">
+          <i class="fa-solid fa-store"></i> Produtos em Destaque
+        </div>
+        <h2 class="text-3xl font-black text-white tracking-tight">Catálogo de Gift Cards & Jogos</h2>
+      </div>
+
+      <!-- Search Input -->
+      <div class="relative w-full md:w-80">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
+        <input type="text" id="searchInput" placeholder="Buscar produto ou gift card..." class="w-full bg-cardBg border border-cardBorder rounded-2xl pl-11 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-discord transition duration-200">
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="flex items-center gap-2.5 overflow-x-auto pb-4 mb-8 no-scrollbar" id="categoryTabs">
+      <button onclick="setCategory('all')" data-cat="all" class="cat-btn active bg-discord text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition duration-200 shadow-md">
+        <i class="fa-solid fa-border-all mr-1.5"></i> Todos os Produtos
+      </button>
+      <button onclick="setCategory('giftcards')" data-cat="giftcards" class="cat-btn bg-cardBg hover:bg-cardBorder text-gray-400 hover:text-white border border-cardBorder px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition duration-200">
+        <i class="fa-solid fa-gift mr-1.5"></i> Gift Cards
+      </button>
+      <button onclick="setCategory('games')" data-cat="games" class="cat-btn bg-cardBg hover:bg-cardBorder text-gray-400 hover:text-white border border-cardBorder px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition duration-200">
+        <i class="fa-solid fa-gamepad mr-1.5"></i> Jogos & Créditos
+      </button>
+      <button onclick="setCategory('xbox')" data-cat="xbox" class="cat-btn bg-cardBg hover:bg-cardBorder text-gray-400 hover:text-white border border-cardBorder px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition duration-200">
+        <i class="fa-brands fa-xbox mr-1.5"></i> Xbox
+      </button>
+      <button onclick="setCategory('subscriptions')" data-cat="subscriptions" class="cat-btn bg-cardBg hover:bg-cardBorder text-gray-400 hover:text-white border border-cardBorder px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition duration-200">
+        <i class="fa-solid fa-star mr-1.5"></i> Assinaturas
+      </button>
+    </div>
+
+    <!-- Dynamic Product Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="productGrid">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="noResults" class="hidden text-center py-20 bg-cardBg/40 border border-cardBorder rounded-3xl">
+      <div class="w-16 h-16 bg-cardBg rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-500 text-2xl border border-cardBorder">
+        <i class="fa-solid fa-box-open"></i>
+      </div>
+      <h3 class="text-xl font-bold text-white mb-1">Nenhum produto encontrado</h3>
+      <p class="text-sm text-gray-400">Verifique a busca ou tente selecionar outra categoria.</p>
+    </div>
+  </main>
+
+  <section id="como-funciona" class="bg-cardBg/40 border-t border-b border-cardBorder py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <div class="text-xs font-bold text-discord uppercase tracking-wider mb-2">Simplicidade & Segurança</div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white">Como comprar na 7even Store?</h2>
+        <p class="text-gray-400 text-sm mt-2">Veja como adquirir seu código digital rapidamente em 3 passos simples.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        <div class="bg-cardBg p-8 rounded-3xl border border-cardBorder relative group hover:border-discord/50 transition">
+          <div class="w-12 h-12 bg-discord/20 text-discord font-black rounded-2xl flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition">01</div>
+          <h3 class="text-xl font-bold text-white mb-2">Selecione o Produto</h3>
+          <p class="text-sm text-gray-400 leading-relaxed">Navegue pelo nosso catálogo e clique no botão de compra do Gift Card desejado.</p>
+        </div>
+        <div class="bg-cardBg p-8 rounded-3xl border border-cardBorder relative group hover:border-discord/50 transition">
+          <div class="w-12 h-12 bg-discord/20 text-discord font-black rounded-2xl flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition">02</div>
+          <h3 class="text-xl font-bold text-white mb-2">Gere o Ticket</h3>
+          <p class="text-sm text-gray-400 leading-relaxed">O modal gerará uma mensagem e um código exclusivo de pedido (ex: #7EVEN-8492) para você copiar.</p>
+        </div>
+        <div class="bg-cardBg p-8 rounded-3xl border border-cardBorder relative group hover:border-discord/50 transition">
+          <div class="w-12 h-12 bg-discord/20 text-discord font-black rounded-2xl flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition">03</div>
+          <h3 class="text-xl font-bold text-white mb-2">Finalize no Discord</h3>
+          <p class="text-sm text-gray-400 leading-relaxed">Cole os dados do pedido no ticket do nosso Discord, efetue o pagamento e receba seu produto.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <div class="text-xs font-bold text-discord uppercase tracking-wider mb-2">Tire suas Dúvidas</div>
+        <h2 class="text-3xl font-black text-white">Perguntas Frequentes</h2>
+      </div>
+
+      <div class="space-y-4" id="faqAccordion">
+        <div class="bg-cardBg border border-cardBorder rounded-2xl overflow-hidden">
+          <button onclick="toggleFaq(1)" class="w-full p-5 text-left font-bold text-white flex items-center justify-between gap-4 hover:bg-cardBorder/30 transition">
+            <span>Como recebo o meu gift card ou código?</span>
+            <i id="faqIcon-1" class="fa-solid fa-chevron-down text-discord transition duration-200"></i>
+          </button>
+          <div id="faqContent-1" class="hidden px-5 pb-5 text-sm text-gray-400 leading-relaxed border-t border-cardBorder/50 pt-3">
+            Após abrir o ticket no nosso Discord e enviar o código do pedido, nossa equipe disponibilizará o código PIN diretamente na conversa privada do ticket.
+          </div>
+        </div>
+        <div class="bg-cardBg border border-cardBorder rounded-2xl overflow-hidden">
+          <button onclick="toggleFaq(2)" class="w-full p-5 text-left font-bold text-white flex items-center justify-between gap-4 hover:bg-cardBorder/30 transition">
+            <span>Quais meios de pagamento são aceitos?</span>
+            <i id="faqIcon-2" class="fa-solid fa-chevron-down text-discord transition duration-200"></i>
+          </button>
+          <div id="faqContent-2" class="hidden px-5 pb-5 text-sm text-gray-400 leading-relaxed border-t border-cardBorder/50 pt-3">
+            Aceitamos PIX (aprovado na hora), Cartão de Crédito e Criptomoedas diretamente pelos nossos sistemas do servidor Discord.
+          </div>
+        </div>
+        <div class="bg-cardBg border border-cardBorder rounded-2xl overflow-hidden">
+          <button onclick="toggleFaq(3)" class="w-full p-5 text-left font-bold text-white flex items-center justify-between gap-4 hover:bg-cardBorder/30 transition">
+            <span>Os códigos da 7even Store são originais?</span>
+            <i id="faqIcon-3" class="fa-solid fa-chevron-down text-discord transition duration-200"></i>
+          </button>
+          <div id="faqContent-3" class="hidden px-5 pb-5 text-sm text-gray-400 leading-relaxed border-t border-cardBorder/50 pt-3">
+            Sim! Todos os nossos códigos são 100% originais, adquiridos de fornecedores e distribuidores oficiais com total garantia de resgate.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-cardBg border-t border-cardBorder py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-8 pb-8 border-b border-cardBorder">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-discord flex items-center justify-center text-white font-black text-lg overflow-hidden">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2sQlaWjeHBJ3OjIFx_WGqdE_NCmzzcORbCOvqEsKv7A&s=10" onerror="handleLogoError(this)" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <span class="text-xl font-black text-white tracking-tight">7EVEN <span class="text-discord">STORE</span></span>
+            <div class="text-[10px] text-gray-400 uppercase tracking-widest">Digital Store</div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-6 text-sm font-medium text-gray-400">
+          <a href="#catalogo" class="hover:text-white transition">Produtos</a>
+          <a href="#como-funciona" class="hover:text-white transition">Como Funciona</a>
+          <a href="#faq" class="hover:text-white transition">FAQ</a>
+          <button onclick="handleAdminButtonClick()" class="hover:text-discord transition">Admin</button>
+        </div>
+
+        <a id="footerDiscordBtn" href="#" target="_blank" class="bg-discord hover:bg-discord-hover text-white text-xs font-bold px-5 py-2.5 rounded-xl transition flex items-center gap-2">
+          <i class="fa-brands fa-discord"></i> Discord Oficial
+        </a>
+      </div>
+
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+        <p>&copy; 2026 7even Store. Todos os direitos reservados.</p>
+        <p class="text-center sm:text-right">Não afiliado à Discord, Google, Microsoft, ou Roblox.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Buy Modal -->
+  <div id="buyModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-cardBg border border-cardBorder rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative animate-pop">
+      
+      <button onclick="closeBuyModal()" class="absolute top-5 right-5 text-gray-400 hover:text-white text-xl transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="text-center mb-6">
+        <div class="w-14 h-14 bg-discord/20 text-discord rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3">
+          <i class="fa-brands fa-discord"></i>
+        </div>
+        <h3 class="text-xl font-black text-white">Concluir Pedido no Discord</h3>
+        <p class="text-xs text-gray-400 mt-1">Copie o código do seu ticket e envie no nosso servidor</p>
+      </div>
+
+      <div class="bg-darkBg p-4 rounded-2xl border border-cardBorder mb-5">
+        <div class="flex items-center gap-3.5">
+          <img id="modalProductImg" src="" alt="Produto" onerror="handleLogoError(this)" class="w-16 h-16 object-cover rounded-xl border border-cardBorder">
+          <div class="flex-1">
+            <span id="modalProductCategory" class="text-[10px] bg-discord/20 text-discord px-2 py-0.5 rounded-md font-bold uppercase tracking-wider"></span>
+            <h4 id="modalProductTitle" class="font-bold text-white text-sm mt-0.5"></h4>
+            <div id="modalProductPrice" class="text-accentGreen font-extrabold text-base mt-0.5"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-xs font-semibold text-gray-300">Código de Ticket Gerado:</label>
+          <span id="modalOrderTag" class="text-[10px] text-discord font-mono font-bold"></span>
+        </div>
+        
+        <div class="relative">
+          <textarea id="orderTicketText" readonly rows="3" class="w-full bg-darkBg border border-cardBorder rounded-xl p-3 text-xs text-gray-300 font-mono resize-none focus:outline-none"></textarea>
+          <button onclick="copyOrderTicket()" class="absolute bottom-2.5 right-2.5 bg-discord hover:bg-discord-hover text-white text-xs px-3.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-md">
+            <i class="fa-regular fa-copy"></i> <span id="copyBtnText">Copiar Mensagem</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-discord/10 border border-discord/20 rounded-2xl p-4 mb-6 text-xs space-y-2 text-gray-300">
+        <div class="flex items-start gap-2">
+          <span class="font-bold text-discord">1.</span>
+          <span>Clique em <b>Copiar Código e Ir para Discord</b>.</span>
+        </div>
+        <div class="flex items-start gap-2">
+          <span class="font-bold text-discord">2.</span>
+          <span>Abra um ticket de compra em nosso Discord.</span>
+        </div>
+        <div class="flex items-start gap-2">
+          <span class="font-bold text-discord">3.</span>
+          <span>Cole a mensagem no chat do ticket para ser atendido.</span>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <button onclick="copyAndRedirectDiscord()" class="w-full bg-discord hover:bg-discord-hover text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2.5 transition duration-300 glow-discord text-sm">
+          <i class="fa-brands fa-discord text-xl"></i> Copiar Código e Ir para Discord
+        </button>
+        <a id="modalDiscordRedirectDirect" href="#" target="_blank" onclick="closeBuyModal()" class="w-full bg-darkBg hover:bg-cardBorder text-gray-300 border border-cardBorder font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition text-xs">
+          Ir Direto para o Discord
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-cardBg border border-cardBorder rounded-3xl max-w-sm w-full p-6 sm:p-7 shadow-2xl relative animate-pop">
+      
+      <button onclick="closeLoginModal()" class="absolute top-5 right-5 text-gray-400 hover:text-white text-xl transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 bg-discord/20 text-discord rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <h3 class="text-xl font-black text-white">Acesso Administrativo</h3>
+        <p class="text-xs text-gray-400 mt-1">Use samuel / sml777 para gerenciar a loja</p>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLoginSubmit(event)" autocomplete="off" class="space-y-4">
+        <div>
+          <label class="text-xs text-gray-400 block mb-1 font-semibold">Usuário Admin</label>
+          <div class="relative">
+            <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+            <input type="text" id="loginUsername" required autocomplete="off" placeholder="samuel" class="w-full bg-darkBg border border-cardBorder rounded-xl pl-9 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 block mb-1 font-semibold">Senha</label>
+          <div class="relative">
+            <i class="fa-solid fa-key absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+            <input type="password" id="loginPassword" required autocomplete="off" placeholder="sml777" class="w-full bg-darkBg border border-cardBorder rounded-xl pl-9 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord">
+          </div>
+        </div>
+
+        <div id="loginErrorMsg" class="hidden text-xs text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-xl flex items-center gap-2">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span id="loginErrorText">Usuário ou senha incorretos. Use samuel / sml777</span>
+        </div>
+
+        <button type="submit" class="w-full bg-discord hover:bg-discord-hover text-white font-bold py-3 rounded-xl text-xs sm:text-sm transition duration-200 glow-discord">
+          <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Entrar no Painel
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Admin Modal -->
+  <div id="adminModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-cardBg border border-cardBorder rounded-3xl max-w-3xl w-full p-6 sm:p-7 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-pop">
+      
+      <button onclick="closeAdminModal()" class="absolute top-5 right-5 text-gray-400 hover:text-white text-xl transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-cardBorder">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 bg-discord/20 text-discord rounded-2xl flex items-center justify-center text-xl">
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+              Painel Administrativo
+              <span class="text-[10px] bg-emerald-500/20 text-accentGreen border border-emerald-500/30 px-2 py-0.5 rounded-md font-mono">ON</span>
+            </h3>
+            <p class="text-xs text-gray-400">Logado como: <span id="adminCurrentUserName" class="text-discord font-bold"></span></p>
+          </div>
+        </div>
+
+        <button onclick="logoutAdmin()" class="bg-red-500/15 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 self-start sm:self-auto">
+          <i class="fa-solid fa-right-from-bracket"></i> Sair da Conta
+        </button>
+      </div>
+
+      <!-- Admin Navigation Tabs -->
+      <div class="flex items-center gap-2 border-b border-cardBorder pb-3 mb-6 overflow-x-auto no-scrollbar">
+        <button onclick="switchAdminTab('products')" id="tabBtn-products" class="admin-tab-btn active bg-discord text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-box"></i> Gerenciar Produtos
+        </button>
+        <button onclick="switchAdminTab('users')" id="tabBtn-users" class="admin-tab-btn bg-darkBg text-gray-400 hover:text-white border border-cardBorder px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-users-gear"></i> Gerenciar Logins / Usuários
+        </button>
+        <button onclick="switchAdminTab('settings')" id="tabBtn-settings" class="admin-tab-btn bg-darkBg text-gray-400 hover:text-white border border-cardBorder px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-gear"></i> Configurações & Logo
+        </button>
+      </div>
+
+      <!-- TAB 1: GERENCIAR PRODUTOS -->
+      <div id="tabContent-products" class="admin-tab-content space-y-8">
+        <div>
+          <h4 id="formModalTitle" class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-plus-circle text-discord"></i> Cadastrar Novo Produto
+          </h4>
+          
+          <form id="productForm" onsubmit="handleProductSubmit(event)" class="space-y-4">
+            <input type="hidden" id="editProductId" value="">
+
+            <div>
+              <label class="text-xs text-gray-400 block mb-1 font-semibold">Nome do Gift Card / Produto</label>
+              <input type="text" id="prodTitle" required placeholder="Ex: Google Play R$ 50" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs text-gray-400 block mb-1 font-semibold">Preço (R$)</label>
+                <input type="text" id="prodPrice" required placeholder="50,00" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord">
+              </div>
+              <div>
+                <label class="text-xs text-gray-400 block mb-1 font-semibold">Categoria</label>
+                <select id="prodCategory" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord">
+                  <option value="giftcards">Gift Cards</option>
+                  <option value="games">Jogos & Créditos</option>
+                  <option value="xbox">Xbox</option>
+                  <option value="subscriptions">Assinaturas</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs text-gray-400 block mb-1 font-semibold">URL da Imagem</label>
+                <input type="url" id="prodImage" required placeholder="https://..." class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord">
+              </div>
+              <div>
+                <label class="text-xs text-gray-400 block mb-1 font-semibold">Status do Estoque</label>
+                <select id="prodStatus" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord">
+                  <option value="Em Estoque">Em Estoque</option>
+                  <option value="Últimas Unidades">Últimas Unidades</option>
+                  <option value="Esgotado">Esgotado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-2">
+              <button type="submit" id="saveProdBtn" class="flex-1 bg-accentGreen hover:bg-emerald-400 text-darkBg font-black py-3 rounded-xl text-xs sm:text-sm transition">
+                <i class="fa-solid fa-check mr-1"></i> Salvar Produto
+              </button>
+              <button type="button" onclick="resetForm()" class="bg-cardBorder hover:bg-gray-700 text-gray-300 font-bold px-4 py-3 rounded-xl text-xs transition">
+                Limpar
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="text-sm font-bold text-white">Produtos Atuais no Catálogo</h4>
+            <button onclick="restoreDefaultProducts()" class="text-xs text-discord hover:underline">Restaurar Padrões</button>
+          </div>
+          <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="adminProductList"></div>
+        </div>
+      </div>
+
+      <!-- TAB 2: GERENCIAR USUÁRIOS & LOGINS ADMIN -->
+      <div id="tabContent-users" class="admin-tab-content space-y-8 hidden">
+        <div class="bg-darkBg p-5 rounded-2xl border border-cardBorder">
+          <h4 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-user-plus text-discord"></i> Criar Novo Usuário Administrador
+          </h4>
+
+          <form id="createUserForm" onsubmit="handleCreateUserSubmit(event)" autocomplete="off" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs text-gray-400 block mb-1 font-semibold">Nome do Administrador</label>
+                <input type="text" id="newAdminName" required placeholder="Ex: Carlos Silva" class="w-full bg-cardBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord">
+              </div>
+              <div>
+                <label class="text-xs text-gray-400 block mb-1 font-semibold">Usuário de Login</label>
+                <input type="text" id="newAdminUsername" required placeholder="Ex: carlos.admin" class="w-full bg-cardBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs text-gray-400 block mb-1 font-semibold">Senha</label>
+                <input type="password" id="newAdminPassword" required placeholder="Digite a senha" class="w-full bg-cardBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord">
+              </div>
+              <div>
+                <label class="text-xs text-gray-400 block mb-1 font-semibold">Confirmar Senha</label>
+                <input type="password" id="newAdminPasswordConfirm" required placeholder="Repita a mesma senha" class="w-full bg-cardBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord">
+              </div>
+            </div>
+
+            <button type="submit" class="w-full bg-discord hover:bg-discord-hover text-white font-bold py-3 rounded-xl text-xs sm:text-sm transition duration-200 shadow-md flex items-center justify-center gap-2">
+              <i class="fa-solid fa-user-check"></i> Cadastrar Novo Administrador
+            </button>
+          </form>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="text-sm font-bold text-white">Administradores Cadastrados</h4>
+            <span class="text-xs text-gray-400 font-mono">Persistido no LocalStorage</span>
+          </div>
+          <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="adminUsersList"></div>
+        </div>
+      </div>
+
+      <!-- TAB 3: CONFIGURAÇÕES GLOBAIS & LOGO -->
+      <div id="tabContent-settings" class="admin-tab-content space-y-6 hidden">
+        <!-- Logo Settings -->
+        <div class="bg-darkBg p-5 rounded-2xl border border-cardBorder space-y-4">
+          <h4 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-image text-discord"></i> Gerenciar Logotipo do Site (HTTPS Link)
+          </h4>
+          <p class="text-xs text-gray-400">Insira a URL da imagem de logo. Atualiza imediatamente em todo o site.</p>
+          
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input type="url" id="adminLogoLinkInput" class="flex-grow bg-cardBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord" placeholder="https://...">
+            <button onclick="saveLogoLink()" class="bg-discord hover:bg-discord-hover text-white font-bold px-5 py-2.5 rounded-xl text-xs transition whitespace-nowrap">
+              Salvar Logo
+            </button>
+          </div>
+          <div class="flex items-center gap-3 pt-2">
+            <span class="text-xs text-gray-400">Prévia Atual:</span>
+            <img id="adminLogoPreview" src="" onerror="handleLogoError(this)" class="w-10 h-10 object-cover rounded-xl border border-cardBorder">
+          </div>
+        </div>
+
+        <!-- Discord Server Link Settings -->
+        <div class="bg-darkBg p-5 rounded-2xl border border-cardBorder">
+          <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
+            <i class="fa-brands fa-discord text-discord"></i> Servidor Discord Principal
+          </h4>
+          <p class="text-xs text-gray-400 mb-4">Atualize o link do convite do Discord. Todos os botões do site serão atualizados instantaneamente.</p>
+          
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input type="text" id="adminDiscordLink" class="flex-grow bg-cardBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-discord" placeholder="https://discord.gg/seu-link">
+            <button onclick="saveDiscordLink()" class="bg-discord hover:bg-discord-hover text-white font-bold px-5 py-2.5 rounded-xl text-xs transition whitespace-nowrap">
+              Salvar Link
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Global State & LocalStorage Keys
+    const DEFAULT_LOGO = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2sQlaWjeHBJ3OjIFx_WGqdE_NCmzzcORbCOvqEsKv7A&s=10";
+    let logoLink = localStorage.getItem('7even_logoLink') || DEFAULT_LOGO;
+    let discordLink = localStorage.getItem('7even_discordLink') || "https://discord.gg/SEULINKAQUI";
+    let currentCategory = 'all';
+
+    // Master Admin Credentials: samuel / sml777
+    const defaultAdmins = [
+      {
+        id: 1,
+        name: "Samuel Master Admin",
+        username: "samuel",
+        password: "sml777",
+        isDefault: true
+      }
+    ];
+
+    let adminUsers = JSON.parse(localStorage.getItem('7even_admin_users')) || defaultAdmins;
+    let loggedAdmin = JSON.parse(sessionStorage.getItem('7even_logged_user')) || null;
+
+    // Catalog items
+    const defaultProducts = [
+      {
+        id: 1,
+        title: "Gift Card Google Play R$ 30",
+        price: "R$ 30,00",
+        category: "giftcards",
+        status: "Em Estoque",
+        rating: "5.0",
+        image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 2,
+        title: "Gift Card Google Play R$ 50",
+        price: "R$ 50,00",
+        category: "giftcards",
+        status: "Em Estoque",
+        rating: "4.9",
+        image: "https://images.unsplash.com/photo-1556742049-0a670f4a4591?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 3,
+        title: "Roblox 800 Robux",
+        price: "R$ 45,00",
+        category: "games",
+        status: "Em Estoque",
+        rating: "4.9",
+        image: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 4,
+        title: "Free Fire 1060 Diamantes",
+        price: "R$ 38,00",
+        category: "games",
+        status: "Em Estoque",
+        rating: "5.0",
+        image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 5,
+        title: "Valorant Points 1050 VP",
+        price: "R$ 34,90",
+        category: "games",
+        status: "Em Estoque",
+        rating: "5.0",
+        image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 6,
+        title: "Xbox Game Pass Ultimate 1 Mês",
+        price: "R$ 49,90",
+        category: "xbox",
+        status: "Últimas Unidades",
+        rating: "4.8",
+        image: "https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 7,
+        title: "Xbox Gift Card R$ 100",
+        price: "R$ 100,00",
+        category: "xbox",
+        status: "Em Estoque",
+        rating: "4.9",
+        image: "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 8,
+        title: "Discord Nitro Mensal",
+        price: "R$ 24,90",
+        category: "subscriptions",
+        status: "Em Estoque",
+        rating: "5.0",
+        image: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 9,
+        title: "Spotify Premium 3 Meses",
+        price: "R$ 34,90",
+        category: "subscriptions",
+        status: "Em Estoque",
+        rating: "4.7",
+        image: "https://images.unsplash.com/photo-1611339555312-e607c8352fd7?w=500&auto=format&fit=crop&q=80"
+      }
+    ];
+
+    let products = JSON.parse(localStorage.getItem('7even_products')) || defaultProducts;
+
+    window.onload = function() {
+      if (!localStorage.getItem('7even_admin_users')) {
+        localStorage.setItem('7even_admin_users', JSON.stringify(adminUsers));
+      }
+      
+      updateLogoUI();
+      updateDiscordLinks();
+      renderProducts();
+      updateAdminNavText();
+
+      const searchInputElem = document.getElementById("searchInput");
+      if (searchInputElem) {
+        searchInputElem.addEventListener("input", filterProducts);
+      }
+    };
+
+    function updateLogoUI() {
+      const logoImg = document.getElementById("brandLogoImg");
+      if (logoImg) {
+        logoImg.src = logoLink;
+      }
+      const adminPrev = document.getElementById("adminLogoPreview");
+      if (adminPrev) {
+        adminPrev.src = logoLink;
+      }
+      const adminInput = document.getElementById("adminLogoLinkInput");
+      if (adminInput) {
+        adminInput.value = logoLink;
+      }
+    }
+
+    function saveLogoLink() {
+      const inputElem = document.getElementById("adminLogoLinkInput");
+      if (!inputElem) return;
+      const inputVal = inputElem.value.trim();
+      if (inputVal) {
+        logoLink = inputVal;
+        localStorage.setItem('7even_logoLink', logoLink);
+        updateLogoUI();
+        showToast("Logotipo atualizado com sucesso!");
+      }
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById("mobileMenu");
+      if (menu) menu.classList.toggle("hidden");
+    }
+
+    function updateDiscordLinks() {
+      const links = [
+        document.getElementById("navDiscordBtn"),
+        document.getElementById("mobileDiscordBtn"),
+        document.getElementById("heroDiscordBtn"),
+        document.getElementById("footerDiscordBtn")
+      ];
+      links.forEach(el => {
+        if (el) el.href = discordLink;
+      });
+      const adminDiscordInput = document.getElementById("adminDiscordLink");
+      if (adminDiscordInput) adminDiscordInput.value = discordLink;
+    }
+
+    function getCategoryLabel(cat) {
+      switch(cat) {
+        case 'giftcards': return 'Gift Card';
+        case 'games': return 'Jogos';
+        case 'xbox': return 'Xbox';
+        case 'subscriptions': return 'Assinatura';
+        default: return 'Digital';
+      }
+    }
+
+    function renderProducts(items = products) {
+      const grid = document.getElementById("productGrid");
+      const noResults = document.getElementById("noResults");
+      if (!grid || !noResults) return;
+
+      grid.innerHTML = "";
+
+      if (items.length === 0) {
+        noResults.classList.remove("hidden");
+        return;
+      } else {
+        noResults.classList.add("hidden");
+      }
+
+      items.forEach(product => {
+        const card = document.createElement("div");
+        card.className = "bg-cardBg border border-cardBorder rounded-3xl p-4 flex flex-col justify-between card-glow transition duration-300 relative group";
+
+        const isOutOfStock = product.status === "Esgotado";
+
+        card.innerHTML = `
+          <div>
+            <div class="relative overflow-hidden rounded-2xl mb-4 aspect-video bg-darkBg border border-cardBorder/50">
+              <img src="${product.image}" alt="${product.title}" onerror="handleLogoError(this)" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+              
+              <span class="absolute top-2.5 left-2.5 bg-discord/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                ${getCategoryLabel(product.category)}
+              </span>
+
+              <span class="absolute top-2.5 right-2.5 ${isOutOfStock ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-emerald-500/20 text-accentGreen border-emerald-500/30'} backdrop-blur-md text-[10px] font-bold px-2.5 py-1 rounded-lg border">
+                ${product.status || 'Em Estoque'}
+              </span>
+            </div>
+
+            <div class="flex items-center justify-between mb-1 text-xs">
+              <div class="flex items-center gap-1 text-amber-400">
+                <i class="fa-solid fa-star text-[11px]"></i>
+                <span class="font-bold text-gray-300 text-[11px]">${product.rating || '5.0'}</span>
+              </div>
+              <span class="text-[10px] text-gray-500 font-medium">7even Verified</span>
+            </div>
+
+            <h3 class="font-bold text-white text-base mb-2 group-hover:text-discord transition line-clamp-2">${product.title}</h3>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-cardBorder/80 flex items-center justify-between gap-2">
+            <div>
+              <span class="text-[10px] text-gray-400 font-medium block">Preço Pix / Card:</span>
+              <span class="text-accentGreen font-black text-lg">${product.price}</span>
+            </div>
+
+            <button onclick="openBuyModal(${product.id})" ${isOutOfStock ? 'disabled' : ''} class="${isOutOfStock ? 'bg-gray-700 cursor-not-allowed text-gray-400' : 'bg-discord hover:bg-discord-hover text-white glow-discord'} text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5">
+              <i class="fa-brands fa-discord text-sm"></i> ${isOutOfStock ? 'Esgotado' : 'Comprar'}
+            </button>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function setCategory(cat) {
+      currentCategory = cat;
+      const buttons = document.querySelectorAll(".cat-btn");
+      buttons.forEach(btn => {
+        if(btn.getAttribute("data-cat") === cat) {
+          btn.className = "cat-btn active bg-discord text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition duration-200 shadow-md";
+        } else {
+          btn.className = "cat-btn bg-cardBg hover:bg-cardBorder text-gray-400 hover:text-white border border-cardBorder px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition duration-200";
+        }
+      });
+      filterProducts();
+    }
+
+    function filterProducts() {
+      const searchInputElem = document.getElementById("searchInput");
+      const query = searchInputElem ? searchInputElem.value.toLowerCase() : "";
+      const filtered = products.filter(p => {
+        const matchesCategory = currentCategory === 'all' || p.category === currentCategory;
+        const matchesQuery = p.title.toLowerCase().includes(query);
+        return matchesCategory && matchesQuery;
+      });
+      renderProducts(filtered);
+    }
+
+    function openBuyModal(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      const orderCode = `#7EVEN-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      document.getElementById("modalProductImg").src = product.image;
+      document.getElementById("modalProductTitle").innerText = product.title;
+      document.getElementById("modalProductPrice").innerText = product.price;
+      document.getElementById("modalProductCategory").innerText = getCategoryLabel(product.category);
+      document.getElementById("modalOrderTag").innerText = orderCode;
+
+      const fullOrderMsg = `🚀 [NOVO PEDIDO - 7EVEN STORE]\nCódigo: ${orderCode}\nProduto: ${product.title}\nValor: ${product.price}\nData: ${new Date().toLocaleDateString('pt-BR')}`;
+      document.getElementById("orderTicketText").value = fullOrderMsg;
+
+      document.getElementById("modalDiscordRedirectDirect").href = discordLink;
+      document.getElementById("buyModal").classList.remove("hidden");
+    }
+
+    function closeBuyModal() {
+      document.getElementById("buyModal").classList.add("hidden");
+      document.getElementById("copyBtnText").innerText = "Copiar Mensagem";
+    }
+
+    function copyOrderTicket() {
+      const copyText = document.getElementById("orderTicketText");
+      if (!copyText) return;
+      copyText.select();
+      
+      try {
+        document.execCommand("copy");
+        document.getElementById("copyBtnText").innerText = "Copiado!";
+        showToast("Código #7EVEN-XXXX copiado!");
+        
+        setTimeout(() => {
+          document.getElementById("copyBtnText").innerText = "Copiar Mensagem";
+        }, 2500);
+      } catch (err) {
+        showToast("Erro ao copiar. Selecione manualmente.");
+      }
+    }
+
+    function copyAndRedirectDiscord() {
+      copyOrderTicket();
+      setTimeout(() => {
+        window.open(discordLink, "_blank");
+        closeBuyModal();
+      }, 300);
+    }
+
+    function toggleFaq(index) {
+      const content = document.getElementById(`faqContent-${index}`);
+      const icon = document.getElementById(`faqIcon-${index}`);
+      if (!content || !icon) return;
+
+      if (content.classList.contains("hidden")) {
+        content.classList.remove("hidden");
+        icon.classList.add("rotate-180");
+      } else {
+        content.classList.add("hidden");
+        icon.classList.remove("rotate-180");
+      }
+    }
+
+    function showToast(message) {
+      const container = document.getElementById("toastContainer");
+      if (!container) return;
+      
+      const toast = document.createElement("div");
+      toast.className = "bg-discord text-white px-4 py-3 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 border border-white/20 animate-pop pointer-events-auto";
+      toast.innerHTML = `<i class="fa-solid fa-circle-check text-accentGreen"></i> <span>${message}</span>`;
+      
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    function handleAdminButtonClick() {
+      if (loggedAdmin) {
+        openAdminModal();
+      } else {
+        openLoginModal();
+      }
+    }
+
+    function updateAdminNavText() {
+      const navText = document.getElementById("navAdminText");
+      if (!navText) return;
+      if (loggedAdmin) {
+        navText.innerText = `Painel (${loggedAdmin.username})`;
+      } else {
+        navText.innerText = "Painel Admin";
+      }
+    }
+
+    function openLoginModal() {
+      document.getElementById("loginForm").reset();
+      document.getElementById("loginErrorMsg").classList.add("hidden");
+      document.getElementById("loginModal").classList.remove("hidden");
+    }
+
+    function closeLoginModal() {
+      document.getElementById("loginModal").classList.add("hidden");
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const userVal = document.getElementById("loginUsername").value.trim().toLowerCase();
+      const passVal = document.getElementById("loginPassword").value;
+
+      adminUsers = JSON.parse(localStorage.getItem('7even_admin_users')) || defaultAdmins;
+      const foundUser = adminUsers.find(u => u.username.toLowerCase() === userVal && u.password === passVal);
+
+      if (foundUser) {
+        loggedAdmin = foundUser;
+        sessionStorage.setItem('7even_logged_user', JSON.stringify(loggedAdmin));
+        closeLoginModal();
+        updateAdminNavText();
+        openAdminModal();
+        showToast(`Bem-vindo, ${loggedAdmin.name}!`);
+      } else {
+        document.getElementById("loginErrorMsg").classList.remove("hidden");
+      }
+    }
+
+    function logoutAdmin() {
+      loggedAdmin = null;
+      sessionStorage.removeItem('7even_logged_user');
+      closeAdminModal();
+      updateAdminNavText();
+      showToast("Você saiu do painel administrativo.");
+    }
+
+    function openAdminModal() {
+      if (!loggedAdmin) {
+        openLoginModal();
+        return;
+      }
+
+      document.getElementById("adminCurrentUserName").innerText = `${loggedAdmin.name} (${loggedAdmin.username})`;
+      renderAdminProductList();
+      renderAdminUsersList();
+      updateLogoUI();
+      switchAdminTab('products');
+      document.getElementById("adminModal").classList.remove("hidden");
+    }
+
+    function closeAdminModal() {
+      document.getElementById("adminModal").classList.add("hidden");
+      resetForm();
+    }
+
+    function switchAdminTab(tab) {
+      const tabs = ['products', 'users', 'settings'];
+      
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tabBtn-${t}`);
+        const content = document.getElementById(`tabContent-${t}`);
+        if (!btn || !content) return;
+        
+        if (t === tab) {
+          btn.className = "admin-tab-btn active bg-discord text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap shadow-md";
+          content.classList.remove("hidden");
+        } else {
+          btn.className = "admin-tab-btn bg-darkBg text-gray-400 hover:text-white border border-cardBorder px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap";
+          content.classList.add("hidden");
+        }
+      });
+    }
+
+    function saveDiscordLink() {
+      const inputElem = document.getElementById("adminDiscordLink");
+      if (!inputElem) return;
+      const newLink = inputElem.value.trim();
+      if (newLink) {
+        discordLink = newLink;
+        localStorage.setItem('7even_discordLink', discordLink);
+        updateDiscordLinks();
+        showToast("Link do servidor Discord salvo com sucesso!");
+      }
+    }
+
+    function handleCreateUserSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("newAdminName").value.trim();
+      const username = document.getElementById("newAdminUsername").value.trim().toLowerCase();
+      const password = document.getElementById("newAdminPassword").value;
+      const confirmPass = document.getElementById("newAdminPasswordConfirm").value;
+
+      if (password !== confirmPass) {
+        showToast("Erro: A confirmação de senha não confere!");
+        return;
+      }
+
+      adminUsers = JSON.parse(localStorage.getItem('7even_admin_users')) || defaultAdmins;
+      const exists = adminUsers.some(u => u.username.toLowerCase() === username);
+
+      if (exists) {
+        showToast("Erro: Este nome de usuário já está em uso!");
+        return;
+      }
+
+      const newUser = {
+        id: Date.now(),
+        name,
+        username,
+        password,
+        isDefault: false
+      };
+
+      adminUsers.push(newUser);
+      localStorage.setItem('7even_admin_users', JSON.stringify(adminUsers));
+
+      document.getElementById("createUserForm").reset();
+      renderAdminUsersList();
+      showToast(`Administrador '${username}' criado com sucesso!`);
+    }
+
+    function renderAdminUsersList() {
+      const container = document.getElementById("adminUsersList");
+      if (!container) return;
+      container.innerHTML = "";
+
+      adminUsers = JSON.parse(localStorage.getItem('7even_admin_users')) || defaultAdmins;
+
+      adminUsers.forEach(u => {
+        const isCurrent = loggedAdmin && loggedAdmin.username === u.username;
+        const isPrimaryAdmin = u.username.toLowerCase() === 'samuel';
+
+        const item = document.createElement("div");
+        item.className = "bg-darkBg p-3.5 rounded-xl border border-cardBorder flex items-center justify-between gap-3 text-xs";
+
+        item.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-discord/20 text-discord flex items-center justify-center font-bold text-sm">
+              <i class="fa-solid fa-user-gear"></i>
+            </div>
+            <div>
+              <div class="font-bold text-white flex items-center gap-1.5">
+                ${u.name}
+                ${isCurrent ? '<span class="text-[9px] bg-discord/30 text-discord px-1.5 py-0.5 rounded font-mono">(Você)</span>' : ''}
+                ${isPrimaryAdmin ? '<span class="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded font-mono">Master (samuel)</span>' : ''}
+              </div>
+              <div class="text-gray-400 text-[11px] font-mono">@${u.username}</div>
+            </div>
+          </div>
+
+          <div>
+            ${(isPrimaryAdmin || isCurrent) ? `
+              <span class="text-[10px] text-gray-500 italic px-2 py-1">Protegido</span>
+            ` : `
+              <button onclick="deleteAdminUser(${u.id})" class="bg-red-500/15 hover:bg-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-lg transition font-semibold text-xs flex items-center gap-1">
+                <i class="fa-solid fa-trash-can"></i> Excluir Login
+              </button>
+            `}
+          </div>
+        `;
+
+        container.appendChild(item);
+      });
+    }
+
+    function deleteAdminUser(userId) {
+      const targetUser = adminUsers.find(u => u.id === userId);
+      if (!targetUser) return;
+
+      if (window.confirm(`Tem certeza que deseja apagar o login do administrador '${targetUser.username}'?`)) {
+        adminUsers = adminUsers.filter(u => u.id !== userId);
+        localStorage.setItem('7even_admin_users', JSON.stringify(adminUsers));
+        renderAdminUsersList();
+        showToast("Login de administrador removido!");
+      }
+    }
+
+    function renderAdminProductList() {
+      const container = document.getElementById("adminProductList");
+      if (!container) return;
+      container.innerHTML = "";
+
+      products.forEach(p => {
+        const item = document.createElement("div");
+        item.className = "bg-darkBg p-3 rounded-xl border border-cardBorder flex items-center justify-between gap-3 text-xs";
+        
+        item.innerHTML = `
+          <div class="flex items-center gap-3 overflow-hidden">
+            <img src="${p.image}" class="w-8 h-8 rounded-lg object-cover" onerror="handleLogoError(this)">
+            <div class="truncate">
+              <div class="font-bold text-white truncate">${p.title}</div>
+              <div class="text-accentGreen text-[11px] font-semibold">${p.price} • ${p.status}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="editProduct('${p.id}')" class="bg-cardBorder hover:bg-discord text-white px-2.5 py-1.5 rounded-lg transition">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button onclick="deleteProduct('${p.id}')" class="bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white px-2.5 py-1.5 rounded-lg transition">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function handleProductSubmit(e) {
+      e.preventDefault();
+      const editId = document.getElementById("editProductId").value;
+      const title = document.getElementById("prodTitle").value.trim();
+      let price = document.getElementById("prodPrice").value.trim();
+      const category = document.getElementById("prodCategory").value;
+      const image = document.getElementById("prodImage").value.trim();
+      const status = document.getElementById("prodStatus").value;
+
+      if (!price.startsWith("R$")) {
+        price = `R$ ${price}`;
+      }
+
+      if (editId !== "") {
+        const idx = products.findIndex(p => String(p.id) === String(editId));
+        if (idx !== -1) {
+          products[idx] = { ...products[idx], title, price, category, image, status };
+          showToast("Produto atualizado com sucesso!");
+        }
+      } else {
+        const newProd = {
+          id: 'prod_' + Date.now(),
+          title,
+          price,
+          category,
+          status,
+          rating: "5.0",
+          image
+        };
+        products.unshift(newProd);
+        showToast("Novo produto cadastrado!");
+      }
+
+      localStorage.setItem('7even_products', JSON.stringify(products));
+      filterProducts();
+      renderAdminProductList();
+      resetForm();
+    }
+
+    function editProduct(id) {
+      const p = products.find(prod => String(prod.id) === String(id));
+      if (!p) return;
+
+      document.getElementById("editProductId").value = p.id;
+      document.getElementById("prodTitle").value = p.title;
+      document.getElementById("prodPrice").value = p.price.replace("R$", "").trim();
+      document.getElementById("prodCategory").value = p.category;
+      document.getElementById("prodImage").value = p.image;
+      document.getElementById("prodStatus").value = p.status || "Em Estoque";
+
+      document.getElementById("formModalTitle").innerHTML = `<i class="fa-solid fa-pen text-discord"></i> Editando Produto`;
+      document.getElementById("saveProdBtn").innerHTML = `<i class="fa-solid fa-check mr-1"></i> Atualizar Produto`;
+    }
+
+    function deleteProduct(id) {
+      if (window.confirm("Tem certeza que deseja apagar este produto do catálogo?")) {
+        products = products.filter(p => String(p.id) !== String(id));
+        localStorage.setItem('7even_products', JSON.stringify(products));
+        filterProducts();
+        renderAdminProductList();
+        showToast("Produto removido com sucesso!");
+      }
+    }
+
+    function resetForm() {
+      const form = document.getElementById("productForm");
+      if (form) form.reset();
+      const editIdElem = document.getElementById("editProductId");
+      if (editIdElem) editIdElem.value = "";
+      const titleElem = document.getElementById("formModalTitle");
+      if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-plus-circle text-discord"></i> Cadastrar Novo Produto`;
+      const btnElem = document.getElementById("saveProdBtn");
+      if (btnElem) btnElem.innerHTML = `<i class="fa-solid fa-check mr-1"></i> Salvar Produto`;
+    }
+
+    function restoreDefaultProducts() {
+      if (window.confirm("Restaurar lista de produtos padrão?")) {
+        products = defaultProducts;
+        localStorage.removeItem('7even_products');
+        filterProducts();
+        renderAdminProductList();
+        showToast("Produtos padrão restaurados.");
+      }
+    }
+  </script>
+</body>
+</html>
